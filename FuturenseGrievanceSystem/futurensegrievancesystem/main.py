@@ -3,7 +3,7 @@ import sqlite3
 import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
-
+import random
 nltk.download('stopwords')
 nltk.download('punkt')
 
@@ -24,7 +24,6 @@ def create_table():
             ticketnumber TEXT NOT NULL,
             status TEXT NOT NULL,
             keywords TEXT NOT NULL
-
         )
     ''')
     conn.commit()
@@ -36,6 +35,9 @@ def extractKeywords(complaint):
     keywords = [word for word in word_tokens if word.isalnum() and word.lower() not in stop_words]
     return ' '.join(keywords)
 
+def ticketNumberGenerator():
+    ticketNumber = random.randint(100000, 999999)
+    return ticketNumber
 
 @app.route("/R", methods=['POST'])
 def handle():
@@ -51,7 +53,7 @@ def add_grievance():
     data = request.get_json()
     name = data.get('name')
     complaint = data.get('complaint')
-    ticketnumber = data.get('ticketnumber')    
+    ticketnumber = ticketNumberGenerator()
     status = data.get('status')
     keywords = extractKeywords(complaint)
 
